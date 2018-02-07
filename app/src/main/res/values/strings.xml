@@ -1,0 +1,26 @@
+<resources>
+    <!-- Main app text placeholder-->
+    <string name="app_name">Samtakie Baking</string>
+
+    <!--ItemFragment text placeholder-->
+    <string name="handler_error_message">must implement RecipeAdapterOnClickHandler</string>
+
+    <!--General error messages -->
+    <string name="loader_error_message">Loader Not Implemented: </string>
+
+
+    <!--Data string which hold data passed via Intent and Fragments set methods-->
+    <string name="position">position</string>
+    <string name="recipeName">recipeName</string>
+    <string name="sPosition">sPosition</string>
+    <string name="stepUri">stepUri</string>
+    <string name="countSteps">countSteps</string>
+    <string name="positionSteps">positionSteps</string>
+    <string name="playerPosition">playerPosition</string>
+
+    <!-- Recipe Fragment text data -->
+    <string name="ingredients_button_text">View Ingredients</string>
+    <string name="recipe_error_message">must implement OnFragmentInteractionListener</string>
+
+
+</resources>

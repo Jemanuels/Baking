@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+    <android.support.constraint.Guideline
+        android:id="@+id/horizontalHalf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="256dp" />
+
+    <TextView
+        android:id="@+id/step_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:padding="8dp"
+        android:layout_below="@+id/playerView"
+        android:ems="10"
+        android:text="Name" />
+
+    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+        android:id="@+id/playerView"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_alignParentTop="true"/>
+
+    <ImageView
+        android:id="@+id/noVideo_iv"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:src="@drawable/no_video"
+        android:layout_alignParentTop="true"/>
+
+    <Button
+        android:id="@+id/nextBtn"
+        style="?android:buttonBarButtonStyle"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+
+        android:layout_alignBaseline="@+id/prevBtn"
+        android:layout_alignBottom="@+id/prevBtn"
+        android:layout_alignParentEnd="true"
+        android:layout_marginLeft="34dp"
+        android:layout_marginRight="8dp"
+        android:onClick="nextData"
+        android:text="Next"/>
+
+    <Button
+        android:id="@+id/prevBtn"
+        style="?android:buttonBarButtonStyle"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/step_tv"
+        android:layout_marginBottom="12dp"
+        android:layout_marginLeft="16dp"
+        android:onClick="prevData"
+        android:text="Prev" />
+
+</RelativeLayout>
