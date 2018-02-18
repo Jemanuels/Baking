@@ -13,6 +13,7 @@ import za.co.samtakie.baking.data.BakingContract;
  * Last updated on 2018/02/02
  */
 
+@SuppressWarnings("ALL")
 public class BakingSyncUtils {
 
     private static boolean sInitialized;
@@ -38,22 +39,18 @@ public class BakingSyncUtils {
         Thread checkForEmpty = new Thread(new Runnable() {
             @Override
             public void run() {
-
-                /* URI for every row of weather data in our weather table*/
-                Uri bakingQueryUri = uri;
-
                 /*
                  * Since this query is going to be used only as a check to see if we have any
                  * data (rather than to display data), we just need to PROJECT the ID of each
                  * row. In our queries where we display data, we need to PROJECT more columns
-                 * to determine what weather details need to be displayed.
+                 * to determine what recipe details need to be displayed.
                  */
                 String[] projectionColumns = {BakingContract.BakingEntry._ID};
 
 
-                /* Here, we perform the query to check to see if we have any weather data */
+                /* Here, we perform the query to check to see if we have any recipe data */
                 Cursor cursor = context.getContentResolver().query(
-                        bakingQueryUri,
+                        uri,
                         projectionColumns,
                         null,
                         null,

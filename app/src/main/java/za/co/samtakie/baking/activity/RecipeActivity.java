@@ -1,19 +1,26 @@
-package za.co.samtakie.baking;
+package za.co.samtakie.baking.activity;
 
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+
+import za.co.samtakie.baking.IngredientsFragment;
+import za.co.samtakie.baking.R;
+import za.co.samtakie.baking.RecipeFragment;
+import za.co.samtakie.baking.StepsFragment;
 import za.co.samtakie.baking.data.*;
 
 /**
  * Created by Jurgen Emanuels
  * Last updated 2018/02/07
  */
-public class RecipeActivity extends AppCompatActivity implements RecipeFragment.RecipeItemOnClickHandler{
+@SuppressWarnings("ALL")
+public class RecipeActivity extends AppCompatActivity implements RecipeFragment.RecipeItemOnClickHandler {
 
     public static final String[] STEPS_PROJECTION  = {
 
@@ -27,12 +34,8 @@ public class RecipeActivity extends AppCompatActivity implements RecipeFragment.
     };
 
     public static final int INDEX_ID = 0;
-    /*public static final int INDEX_COLUMN_STEP_DESCRIPTION = 1; // For future use
-    public static final int INDEX_COLUMN_STEP_ID = 2; // For future use*/
     public static final int INDEX_COLUMN_STEP_SHORTDESCRIPTION = 3;
-    /*public static final int INDEX_COLUMN_STEP_THUMBNAILURL = 4; // For future use
-    public static final int INDEX_COLUMN_STEP_VIDEOUR = 5; // For future use
-    public static final int INDEX_COLUMN_STEP_RECIPEID = 6; // For future use*/
+    public static final int INDEX_COLUMN_STEP_THUMBNAILURL = 4;
 
     //private TextView recipeName;
     // Get the class name and assign it to the constant TAG for Logging purposes
@@ -55,6 +58,7 @@ public class RecipeActivity extends AppCompatActivity implements RecipeFragment.
             mTwoPane = true;
 
             if (savedInstanceState == null) {
+
                 RecipeFragment recipeFragment = new RecipeFragment();
 
                /* Get the correct position, recipeName and the uriRecipeClicked */
@@ -72,6 +76,8 @@ public class RecipeActivity extends AppCompatActivity implements RecipeFragment.
                 fragmentManager.beginTransaction()
                         .add(R.id.fragment_recipe_master, recipeFragment)
                         .commit();
+                /* Set the activity title */
+                setTitle(recipeName);
             }
 
         } else {
@@ -105,6 +111,7 @@ public class RecipeActivity extends AppCompatActivity implements RecipeFragment.
         savedInstanceState.putInt(getResources().getString(R.string.position), position);
         savedInstanceState.putString(getResources().getString(R.string.sPosition), sPosition);
         savedInstanceState.putString(getResources().getString(R.string.stepUri), stepUri.toString());
+        savedInstanceState.putString(getResources().getString(R.string.stepUri), stepUri.toString());
         super.onSaveInstanceState(savedInstanceState);
 
     }
@@ -137,11 +144,11 @@ public class RecipeActivity extends AppCompatActivity implements RecipeFragment.
             Uri ingredient = BakingContract.BakingEntry.buildIngredientsUri();
             ingredientsFragment.setIngredientUri(ingredient);
             ingredientsFragment.setPosition(position);
-            ingredientsFragment.setRecipeName(recipeName);
             ingredientsFragment.setsPosition(sPosition);
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .replace(R.id.fragment_recipe, ingredientsFragment)
                     .commit();
 
@@ -177,6 +184,7 @@ public class RecipeActivity extends AppCompatActivity implements RecipeFragment.
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .replace(R.id.fragment_recipe, stepsFragment)
                     .commit();
 

@@ -1,19 +1,17 @@
 package za.co.samtakie.baking.data;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 
 import za.co.samtakie.baking.R;
-import za.co.samtakie.baking.RecipeActivity;
+import za.co.samtakie.baking.activity.RecipeActivity;
 import za.co.samtakie.baking.RecipeFragment.*;
 
 /**
@@ -21,6 +19,7 @@ import za.co.samtakie.baking.RecipeFragment.*;
  * Last updated on 2018\02\02
  */
 
+@SuppressWarnings("ALL")
 public class StepAdapter extends RecyclerView.Adapter<StepAdapter.RecipeViewHolder> {
 
     /*private  String LOG_TAG = "StepAdapter"; //For Log view*/
@@ -80,6 +79,7 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.RecipeViewHold
      *                 contents of the item at the given position in the data set.
      * @param position The position of the item within the adapter's data set.
      */
+    @SuppressLint("RecyclerView")
     @Override
     public void onBindViewHolder(RecipeViewHolder holder, int position) {
 
@@ -87,8 +87,6 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.RecipeViewHold
         stepPosition = position;
         String step = cursor.getString(RecipeActivity.INDEX_COLUMN_STEP_SHORTDESCRIPTION);
         holder.steps.setText(step);
-        /*Log.d(LOG_TAG, "Testing Ingredients: " + step);
-        Log.d(LOG_TAG, position + "");*/
     }
 
     /**
@@ -119,8 +117,7 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.RecipeViewHold
         TextView steps;
         public RecipeViewHolder(View itemView) {
             super(itemView);
-            steps = (TextView) itemView.findViewById(R.id.recipeSteps);
-            /*Log.i(LOG_TAG, "Adding Listener");*/
+            steps = itemView.findViewById(R.id.recipeSteps);
             itemView.setOnClickListener(this);
 
         }
@@ -134,6 +131,7 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.RecipeViewHold
             int adapterPosition = getAdapterPosition();
             cursor.moveToPosition(adapterPosition);
             int stepID = cursor.getInt(RecipeActivity.INDEX_ID);
+
             mClickHandler.recipeItemOnClickHandler(stepID, view, adapterPosition, getItemCount());
         }
     }

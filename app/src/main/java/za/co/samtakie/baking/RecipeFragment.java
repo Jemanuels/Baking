@@ -1,7 +1,6 @@
 package za.co.samtakie.baking;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,7 +12,6 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +19,7 @@ import android.widget.Button;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import za.co.samtakie.baking.activity.RecipeActivity;
 import za.co.samtakie.baking.data.BakingContract;
 import za.co.samtakie.baking.data.StepAdapter;
 
@@ -33,6 +32,7 @@ import za.co.samtakie.baking.data.StepAdapter;
  * Use the {@link RecipeFragment#} factory method to
  * create an instance of this fragment.
  */
+@SuppressWarnings("ALL")
 public class RecipeFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private LinearLayoutManager layoutManager;
@@ -68,6 +68,8 @@ public class RecipeFragment extends Fragment implements LoaderManager.LoaderCall
         if(savedInstanceState != null){
             recipeName = savedInstanceState.getString(getResources().getString(R.string.recipeName));
             sPosition = savedInstanceState.getString(getResources().getString(R.string.sPosition));
+            stepUri = Uri.parse(savedInstanceState.getString("stepUri"));
+            position = savedInstanceState.getInt("position");
         }
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_recipe_list, container, false);
@@ -125,10 +127,6 @@ public class RecipeFragment extends Fragment implements LoaderManager.LoaderCall
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
      */
     public interface RecipeItemOnClickHandler {
         // TODO: Update argument type and name
@@ -207,5 +205,7 @@ public class RecipeFragment extends Fragment implements LoaderManager.LoaderCall
     public void onSaveInstanceState(Bundle outState) {
         outState.putString(getResources().getString(R.string.recipeName), recipeName);
         outState.putString(getResources().getString(R.string.sPosition), sPosition);
+        outState.putString("stepUri", stepUri.toString());
+        outState.putInt("position", position);
     }
 }

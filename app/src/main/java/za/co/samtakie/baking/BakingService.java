@@ -2,15 +2,18 @@ package za.co.samtakie.baking;
 
 import android.app.IntentService;
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
-
-import za.co.samtakie.baking.data.BakingContentProvider;
+import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import za.co.samtakie.baking.data.BakingContract;
 import za.co.samtakie.baking.data.BakingImages;
 
@@ -21,9 +24,14 @@ import za.co.samtakie.baking.data.BakingImages;
  * Last updated on the 2018/02/07
  * helper methods.
  */
+@SuppressWarnings("ALL")
 public class BakingService extends IntentService {
 
     private static final String ACTION_UPDATE_BAKING_WIDGETS = "za.co.samtakie.baking.action.update_baking_widgets";
+    private NotificationManager mNotificationManager;
+
+    @SuppressWarnings("OctalInteger")
+    public static final int   NOTIFICATION_ID = 001;
 
     public BakingService() {
         super("BakingService");
@@ -32,14 +40,13 @@ public class BakingService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-        startForeground(1,new Notification());
     }
 
     /**
      * Starts this service to perform action startActionBakingWidget with the given parameters. If
      * the service is already performing a task this action will be queued.
      *
-     * @param context passed the Context to enable this service to have acces to the app.
+     * @param context passed the Context to enable this service to have access to the app.
      */
     public static void startActionBakingWidget(Context context) {
         Intent intent = new Intent(context, BakingService.class);
@@ -70,7 +77,9 @@ public class BakingService extends IntentService {
         if (intent != null) {
             final String action = intent.getAction();
             if (ACTION_UPDATE_BAKING_WIDGETS.equals(action)) {
+
                 handleActionUpdateWidgetBakingWidgets();
+
             }
         }
     }
@@ -109,9 +118,65 @@ public class BakingService extends IntentService {
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, BakingWidgetProvider.class));
 
         /* Trigger data update to handle the GridView widgets and force a data refresh */
-        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_grid_view);
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.stack_view);
+
+
 
         /* Now update all widgets */
         BakingWidgetProvider.updateBakingWidgets(this, appWidgetManager, imgRes, bakingId, appWidgetIds);
+    }
+
+    @Override
+    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
+
+        super.onStartCommand(intent, flags, startId);
+
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        String id = "my01";
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            // The user-visible name of the channel.
+            CharSequence name = getString(R.string.app_name);
+// The user-visible description of the channel.
+            String description = "Faya";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel mChannel = new NotificationChannel(id, name, importance);
+// Configure the notification channel.
+            mChannel.setDescription(description);
+            mChannel.enableLights(true);
+// Sets the notification light color for notifications posted to this
+// channel, if the device supports this feature.
+            mChannel.setLightColor(Color.RED);
+            //mChannel.enableVibration(true);
+            //mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            mNotificationManager.createNotificationChannel(mChannel);
+
+            Notification.Builder builder = new Notification.Builder(this, id)
+                    .setContentTitle(getString(R.string.app_name))
+                    .setContentText("Baking")
+                    .setSmallIcon(R.drawable.notification)
+                    .setAutoCancel(true);
+
+            Notification notification = builder.build();
+            mNotificationManager.notify(NOTIFICATION_ID, builder.build());
+            startForeground(NOTIFICATION_ID, notification);
+
+
+        } else {
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                    .setContentTitle(getString(R.string.app_name))
+                    .setContentText("Baking")
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setAutoCancel(true);
+
+            Notification notification = builder.build();
+
+            startForeground(1, notification);
+        }
+        return START_NOT_STICKY;
     }
 }

@@ -1,13 +1,11 @@
 package za.co.samtakie.baking;
 
 
-
 import android.content.Context;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -40,6 +38,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import za.co.samtakie.baking.activity.RecipeActivity;
 import za.co.samtakie.baking.data.BakingContract;
 
 /**
@@ -47,6 +46,7 @@ import za.co.samtakie.baking.data.BakingContract;
  * Last updated on the 2018/02/07, clean code
  * create an instance of this fragment.
  */
+@SuppressWarnings("ALL")
 public class StepsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private SimpleExoPlayer mExoplayer;
@@ -63,6 +63,12 @@ public class StepsFragment extends Fragment implements LoaderManager.LoaderCallb
     private int positionSteps;
     private Uri itemStepUri;
     private long playerPosition;
+    private boolean isThumbNail, isVideoUrl;
+    private String videoUrl;
+
+    /* Uri variable to hold the video or thumbnail data */
+    private Uri builtUri;
+    private Uri builtThumbnailUri;
 
     @BindView(R.id.playerView) SimpleExoPlayerView mPlayerView;
     @BindView(R.id.step_tv) TextView stepTextView;
@@ -81,7 +87,7 @@ public class StepsFragment extends Fragment implements LoaderManager.LoaderCallb
         super.onCreate(savedInstanceState);
 
         // retain this fragment
-        setRetainInstance(true);
+        //setRetainInstance(true);
     }
 
     @Override
@@ -93,7 +99,6 @@ public class StepsFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 
-        getActivity().setTitle(recipeName);
         getLoaderManager().initLoader(ID_ITEM_STEP_LOADER, null, this);
 
         /* Check for the first step and deactivate the Prev button,
@@ -116,25 +121,41 @@ public class StepsFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
-
-        if(savedInstanceState != null){
-            mExoplayer.seekTo(savedInstanceState.getLong("playerPosition"));
-            Log.d("Player position ", savedInstanceState.getLong("playerPosition") + "");
-            playerPosition = savedInstanceState.getLong("playerPosition");
-
-        }
-
-
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_steps, container, false);
 
         ButterKnife.bind(this, view);
 
+        if(savedInstanceState != null) {
+            Log.d("Player position ", savedInstanceState.getLong(getResources().getString(R.string.playerPosition)) + "");
+            playerPosition = savedInstanceState.getLong("playerPosition");
+            recipeName = savedInstanceState.getString("recipeName");
+            videoUrl = savedInstanceState.getString("videoUrl");
+            isThumbNail = savedInstanceState.getBoolean("isThumbNail");
+            isVideoUrl = savedInstanceState.getBoolean("isVideoUrl");
+            countSteps = savedInstanceState.getInt("countSteps");
+            if(savedInstanceState.getString("builtUri") != null) {
+                builtUri = Uri.parse(savedInstanceState.getString("builtUri"));
+            }
+
+            if(savedInstanceState.getString("builtThumbnailUri") != null) {
+                builtThumbnailUri = Uri.parse(savedInstanceState.getString("builtThumbnailUri"));
+            }
+
+            if (isVideoUrl) {
+
+                initializePlayer(builtUri, playerPosition, isThumbNail);
+            } else if(isThumbNail){
+
+                initializePlayer(builtThumbnailUri, playerPosition, isThumbNail);
+            } else {
+                mPlayerView.setVisibility(View.INVISIBLE);
+            }
+
+
+        }
+
         noVideoImgV.setVisibility(View.INVISIBLE);
-
-        final Context context = getContext();
-
-
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -199,20 +220,17 @@ public class StepsFragment extends Fragment implements LoaderManager.LoaderCallb
 
         }
 
+
         return view;
     }
-
-
 
     /**
      * Initialize ExoPlayer
      * @param mediaUri The Uri of the recipe steps video
      */
-    private void initializePlayer(Uri mediaUri, long position){
+    private void initializePlayer(Uri mediaUri, long position, boolean isThumbnail){
         if(mExoplayer == null){
             // Create an instance of the Exoplayer
-            Handler mainHandler = new Handler();
-
             BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
             TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveVideoTrackSelection.Factory(bandwidthMeter);
             TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
@@ -223,7 +241,7 @@ public class StepsFragment extends Fragment implements LoaderManager.LoaderCallb
             // Prepare the MediaSource.
             String userAgent = Util.getUserAgent(getActivity(), "Baking");
             MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(getActivity(), userAgent), new DefaultExtractorsFactory(), null, null);
-            if(position != C.TIME_UNSET){
+            if(position != C.TIME_UNSET && !isThumbnail){
                 mExoplayer.seekTo(position);
             }
             mExoplayer.prepare(mediaSource);
@@ -250,12 +268,39 @@ public class StepsFragment extends Fragment implements LoaderManager.LoaderCallb
         if(mExoplayer != null) {
             releasePlayer();
         }
+        Log.d("onDestroy ", "Has been called");
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        /* Resume the player if it has been initialized when the activity is destroyed. */
+        if(mExoplayer == null) {
+
+            if(builtUri != null){
+                mPlayerView.setVisibility(View.VISIBLE);
+                initializePlayer(builtUri, playerPosition, isThumbNail);
+            } else if(builtThumbnailUri != null){
+                mPlayerView.setVisibility(View.VISIBLE);
+                initializePlayer(builtThumbnailUri, playerPosition, isThumbNail);
+            } else {
+                mPlayerView.setVisibility(View.INVISIBLE);
+            }
+
+        }
         playerPosition = 0;
+        Log.d("onResume ", "Has been called");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        /* Release the player if it has been initialized when the activity is destroyed. */
+        if(mExoplayer != null) {
+            playerPosition = mExoplayer.getCurrentPosition();
+            releasePlayer();
+        }
+        Log.d("onPause ", "Has been called");
     }
 
     @Override
@@ -293,12 +338,26 @@ public class StepsFragment extends Fragment implements LoaderManager.LoaderCallb
                 /* Get the description and videoUri data */
                 String description = data.getString(data.getColumnIndex(BakingContract.BakingEntry.COLUMN_STEP_DESCRIPTION));
                 String videoUri = data.getString(data.getColumnIndex(BakingContract.BakingEntry.COLUMN_STEP_VIDEOURL));
-
+                String thumbnailURL = data.getString(data.getColumnIndex(BakingContract.BakingEntry.COLUMN_STEP_THUMBNAILURL));
+                videoUrl = videoUri;
                 stepTextView.setText(description);
-                Uri builtUri = null;
+
+                /* Uri variable set to null */
+                builtUri = null;
+                builtThumbnailUri = null;
+
+                /* Check if there is a video link available or a thumbnail,
+                if not use local image resource linked to the recipe name*/
                 if (!videoUri.equals("") && !videoUri.equals(" ")) {
                     noVideoImgV.setVisibility(View.INVISIBLE);
                     builtUri = Uri.parse(videoUri).buildUpon().build();
+                    isThumbNail = false;
+                    isVideoUrl = true;
+                } else if (!thumbnailURL.equals("") && !thumbnailURL.equals(" ")){
+                    noVideoImgV.setVisibility(View.INVISIBLE);
+                    builtThumbnailUri = Uri.parse(thumbnailURL).buildUpon().build();
+                    isThumbNail = true;
+                    isVideoUrl = false;
                 } else {
                     noVideoImgV.setVisibility(View.VISIBLE);
                 }
@@ -306,11 +365,11 @@ public class StepsFragment extends Fragment implements LoaderManager.LoaderCallb
 
                     releasePlayer();
                     if(builtUri != null){
-                        mPlayerView.setEnabled(true);
-                        initializePlayer(builtUri, playerPosition);
-                        /*Log.d("Player ", builtUri.toString());*/
-
-
+                        mPlayerView.setVisibility(View.VISIBLE);
+                        initializePlayer(builtUri, playerPosition, isThumbNail);
+                    } else if(builtThumbnailUri != null){
+                        mPlayerView.setVisibility(View.VISIBLE);
+                        initializePlayer(builtThumbnailUri, playerPosition, isThumbNail);
                     } else {
                         mPlayerView.setVisibility(View.INVISIBLE);
                     }
@@ -319,14 +378,13 @@ public class StepsFragment extends Fragment implements LoaderManager.LoaderCallb
                 } else {
                     if(builtUri != null){
                         mPlayerView.setVisibility(View.VISIBLE);
-                        initializePlayer(builtUri, playerPosition);
-                        /*Log.d("Player ", builtUri.toString());*/
-
-
+                        initializePlayer(builtUri, playerPosition, isThumbNail);
+                    } else if(builtThumbnailUri != null){
+                        mPlayerView.setVisibility(View.VISIBLE);
+                        initializePlayer(builtThumbnailUri, playerPosition, isThumbNail);
                     } else {
                         mPlayerView.setVisibility(View.INVISIBLE);
                     }
-
                 }
 
             } while(data.moveToNext());
@@ -365,7 +423,21 @@ public class StepsFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putLong(getResources().getString(R.string.playerPosition), mExoplayer.getCurrentPosition());
-    }
+        if(!isThumbNail && isVideoUrl) {
+            outState.putLong(getResources().getString(R.string.playerPosition), playerPosition);
+        }
+        outState.putString("recipeName", recipeName);
+        outState.putString("videoUrl", videoUrl);
+        outState.putBoolean("isThumbNail", isThumbNail);
+        outState.putBoolean("isVideoUrl", isVideoUrl);
+        outState.putInt("countSteps", countSteps);
+        if(builtUri != null) {
+            outState.putString("builtUri", builtUri.toString());
+        }
 
+        if(builtThumbnailUri != null) {
+            outState.putString("builtThumbnailUri", builtThumbnailUri.toString());
+        }
+        Log.d("Recipe name in Fragment", recipeName);
+    }
 }

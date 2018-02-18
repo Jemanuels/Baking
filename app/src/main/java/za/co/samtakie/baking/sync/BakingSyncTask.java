@@ -17,6 +17,7 @@ import za.co.samtakie.baking.utilities.OpenRecipeJsonUtils;
  * Last updated on 2018/02/02
  */
 
+@SuppressWarnings("ALL")
 public class BakingSyncTask {
 
 

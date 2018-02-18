@@ -9,19 +9,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import za.co.samtakie.baking.ItemFragment.*;
-import za.co.samtakie.baking.MainActivity;
+import za.co.samtakie.baking.activity.MainActivity;
 import za.co.samtakie.baking.R;
 
 /**
  * Created by jemanuels on 2017/12/06.
  * Last updated on 2018/02/02
- */
-
-
-/**
  * {@link RecipeAdapter} exposes a list of recipe to a
  * {@link android.support.v7.widget.RecyclerView}
  */
+@SuppressWarnings("ALL")
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder> {
 
     /*private  String LOG_TAG = "RecipeAdapter"; // For Log view*/
@@ -40,7 +37,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
      *
      * @param clickHandler The on-click handler for this adapter. This single handler is called
      *                     when an item is clicked.
-     * @param context
+     * @param context provide access to application data
      */
     public RecipeAdapter(RecipeAdapterOnClickHandler clickHandler, Context context){
         mClickHandler = clickHandler;
@@ -116,9 +113,8 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         ImageView bakingImageView;
         public RecipeViewHolder(View itemView) {
             super(itemView);
-            label = (TextView) itemView.findViewById(R.id.recipeName);
-            bakingImageView = (ImageView) itemView.findViewById(R.id.baking_iv);
-            /*Log.i(LOG_TAG, "Adding Listener");*/
+            label = itemView.findViewById(R.id.recipeName);
+            bakingImageView = itemView.findViewById(R.id.baking_iv);
             itemView.setOnClickListener(this);
 
         }

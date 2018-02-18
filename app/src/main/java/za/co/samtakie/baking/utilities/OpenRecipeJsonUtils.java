@@ -12,8 +12,10 @@ import za.co.samtakie.baking.data.BakingContract;
 
 /**
  * Created by jemanuels on 2017/12/09.
+ * Last updated on 2017/02/19
  */
 
+@SuppressWarnings("ALL")
 public class OpenRecipeJsonUtils {
 
     public static final String RECIPE_NAME = "name";
@@ -34,29 +36,17 @@ public class OpenRecipeJsonUtils {
 
     public static ContentValues[] getSimpleRecipeStringFromJson(Context context, String jsonResponse) throws JSONException{
 
-
-
-        //ArrayList<RecipeItem> parsedRecipeData;
-
-
         JSONArray recipeArray = new JSONArray(jsonResponse);
 
         ContentValues[] recipeContentValues = new ContentValues[recipeArray.length()];
 
-        //parsedRecipeData = new ArrayList<>();
-        //parsedRecipeData = new String[recipeArray.length()];
-
         for (int i = 0; i < recipeArray.length(); i++){
             ContentValues recipeValues = new ContentValues();
-
-            //RecipeItem recipeItem = new RecipeItem();
-
 
             String recipeName;
             Integer recipeID;
             String recipeImage;
             Integer recipeServings;
-
 
             JSONObject jsonObject = recipeArray.getJSONObject(i);
 
@@ -73,58 +63,7 @@ public class OpenRecipeJsonUtils {
 
             JSONArray jsonArrayIngredients = jsonObject.getJSONArray(RECIPE_INGREDIENTS);
 
-            //ContentValues[] ingredientsContentValues = new ContentValues[jsonArrayIngredients.length()];
-
-            //JSONArray jsonArraySteps = jsonObject.getJSONArray(RECIPE_STEPS);
-            //Log.d("Json", "Name: " + jsonObject.getString("name"));
-
             recipeContentValues[i] = recipeValues;
-
-
-            //ArrayList<Ingredients> parsedIngredientData = new ArrayList<>();
-
-
-
-
-            /*
-
-            ArrayList<Steps> parsedStepsData = new ArrayList<>();
-            for (int l = 0; l < jsonArraySteps.length(); l++){
-
-                Steps recipeSteps = new Steps();
-                JSONObject jsonObjectSteps = jsonArraySteps.getJSONObject(l);
-                String description = jsonObjectSteps.getString(RECIPE_STEPS_DESCRIPTION);
-                int stepID = jsonObjectSteps.getInt(RECIPE_STEPS_ID);
-                String shortDescription = jsonObjectSteps.getString(RECIPE_STEPS_SHORTDESCRIPTION);
-                String thumbnailURL = jsonObjectSteps.getString(RECIPE_STEPS_THUMBNAILURL);
-                String videoURL = jsonObjectSteps.getString(RECIPE_STEPS_VIDEOURL);
-
-                recipeSteps.setDescription(description);
-                recipeSteps.setStepsID(stepID);
-                recipeSteps.setShortDescription(shortDescription);
-                recipeSteps.setThumbnailURL(thumbnailURL);
-                recipeSteps.setVideoURL(videoURL);
-
-
-
-
-                Log.d("Json", "description: " + description);
-                Log.d("Json", "stepID: " + stepID);
-                Log.d("Json", "shortDescription: " + shortDescription);
-                Log.d("Json", "thumbnailURL: " + thumbnailURL);
-                Log.d("Json", "videoURL: " + videoURL);
-
-                parsedStepsData.add(l, recipeSteps);
-                recipeItem.setSteps(parsedStepsData);
-
-
-            }
-
-
-            parsedRecipeData.add(i, recipeItem);
-
-
-*/
         }
 
         return recipeContentValues;
@@ -132,22 +71,14 @@ public class OpenRecipeJsonUtils {
 
     public static ArrayList<ContentValues> getSimpleIngredientsStringFromJson(Context context, String jsonResponse) throws JSONException {
 
-
-        //ArrayList<RecipeItem> parsedRecipeData;
-
-
         JSONArray recipeArray = new JSONArray(jsonResponse);
 
         ContentValues[] iContentValues = new ContentValues[0];
-        //ContentValues[] ingredientsContentValues = new ContentValues[0];
-        int ingredientSize = 0;
 
         for (int i = 0; i < recipeArray.length(); i++) {
 
         }
 
-        //parsedRecipeData = new ArrayList<>();
-        //parsedRecipeData = new String[recipeArray.length()];
 
         ArrayList<ContentValues> ingredientsContentValues = new ArrayList<>();
         for (int i = 0; i < recipeArray.length(); i++) {
@@ -160,12 +91,6 @@ public class OpenRecipeJsonUtils {
 
             JSONArray jsonArrayIngredients = jsonObject.getJSONArray(RECIPE_INGREDIENTS);
 
-            //ingredientsContentValues = new ArrayList<>();
-
-            //JSONArray jsonArraySteps = jsonObject.getJSONArray(RECIPE_STEPS);
-            //Log.d("Json", "Name: " + jsonObject.getString("name"));
-
-            //ArrayList<Ingredients> parsedIngredientData = new ArrayList<>();
 
             for (int k = 0; k < jsonArrayIngredients.length(); k++) {
 
@@ -181,19 +106,12 @@ public class OpenRecipeJsonUtils {
                 ingredientsValues.put(BakingContract.BakingEntry.COLUMN_INGREDIENTS_QUANTITY, quantity);
                 ingredientsValues.put(BakingContract.BakingEntry.COLUMN_INGREDIENTS_RECIPEID, recipeID);
 
-
-                Log.d("Json", "Ingredient: " + ingredient);
-                Log.d("Json", "Measure: " + measure);
-                Log.d("Json", "Quantity: " + quantity);
-                Log.d("Json", "Recipe ID: " + recipeID);
-
                 ingredientsContentValues.add(ingredientsValues);
 
             }
 
 
         }
-
 
         Log.d("Size of Content ", ingredientsContentValues.size() + "");
         return ingredientsContentValues;
@@ -204,16 +122,7 @@ public class OpenRecipeJsonUtils {
 
     public static ArrayList<ContentValues> getSimpleStepsStringFromJson(Context context, String jsonResponse) throws JSONException {
 
-
-
-
-
         JSONArray recipeArray = new JSONArray(jsonResponse);
-
-
-
-
-
 
         ArrayList<ContentValues> stepsContentValues = new ArrayList<>();
         for (int i = 0; i < recipeArray.length(); i++) {
@@ -225,13 +134,6 @@ public class OpenRecipeJsonUtils {
             recipeID = jsonObject.getInt(RECIPE_ID);
 
             JSONArray jsonArraySteps = jsonObject.getJSONArray(RECIPE_STEPS);
-
-            //ingredientsContentValues = new ArrayList<>();
-
-            //JSONArray jsonArraySteps = jsonObject.getJSONArray(RECIPE_STEPS);
-            //Log.d("Json", "Name: " + jsonObject.getString("name"));
-
-            //ArrayList<Ingredients> parsedIngredientData = new ArrayList<>();
 
             for (int k = 0; k < jsonArraySteps.length(); k++) {
 
@@ -251,14 +153,6 @@ public class OpenRecipeJsonUtils {
                 stepsValues.put(BakingContract.BakingEntry.COLUMN_STEP_THUMBNAILURL, thumbnailUrl);
                 stepsValues.put(BakingContract.BakingEntry.COLUMN_STEP_VIDEOURL, videoUrl);
                 stepsValues.put(BakingContract.BakingEntry.COLUMN_STEP_RECIPEID, recipeID);
-
-
-
-
-                /*Log.d("Json", "Ingredient: " + ingredient);
-                Log.d("Json", "Measure: " + measure);
-                Log.d("Json", "Quantity: " + quantity);
-                Log.d("Json", "Recipe ID: " + recipeID);*/
 
                 stepsContentValues.add(stepsValues);
 

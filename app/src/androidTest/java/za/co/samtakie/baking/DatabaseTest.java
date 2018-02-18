@@ -13,8 +13,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-
 import za.co.samtakie.baking.data.BakingContract;
 import za.co.samtakie.baking.data.BakingDbHelper;
 
@@ -22,7 +20,9 @@ import static org.junit.Assert.*;
 
 /**
  * Created by jemanuels on 2018/01/22.
+ * Last updated 2018/02/19
  */
+@SuppressWarnings("ALL")
 @RunWith(AndroidJUnit4.class)
 public class DatabaseTest {
 
@@ -59,7 +59,7 @@ public class DatabaseTest {
         String databaseIsNotOpen = "The database should be open and isn't";
         assertEquals(databaseIsNotOpen, true, database.isOpen());
 
-        /* This Cursor willv contain the name of each table in our database */
+        /* This Cursor will contain the name of each table in our database */
         Cursor tableNameCursor = database.rawQuery(
                 "SELECT name FROM sqlite_master WHERE type='table' AND name='" +
                         BakingContract.BakingEntry.TABLE_NAME + "'", null);
@@ -116,7 +116,7 @@ public class DatabaseTest {
                 null,
                 /* Values for "where" clause */
                 null,
-                /* Coumns to group by */
+                /* Columns to group by */
                 null,
                 /* Columns to filter by row groups */
                 null,
@@ -181,13 +181,6 @@ public class DatabaseTest {
         testValues.put(BakingContract.BakingEntry.COLUMN_RECIPE_IMAGE, "nothing");
         testValues.put(BakingContract.BakingEntry.COLUMN_RECIPE_NAME, "Sranang Roti");
         testValues.put(BakingContract.BakingEntry.COLUMN_RECIPE_SERVINGS, 12);
-
-        /* Insert ContentValues into database and get first row ID back */
-        long firstRowId = database.insert(BakingContract.BakingEntry.TABLE_NAME, null, testValues);
-
-        /* Insert ContentValues into database and get another row ID back */
-        long secondRowId = database.insert(BakingContract.BakingEntry.TABLE_NAME, null, testValues);
-
         dbHelper.onUpgrade(database, 0, 1);
         database = dbHelper.getReadableDatabase();
 
@@ -223,6 +216,7 @@ public class DatabaseTest {
         assertFalse("Database doesn't seem to have been dropped successfully when upgrading", wCursor.moveToFirst());
 
         wCursor.close();
+        tableNameCursor.close();
         dbHelper.close();
     }
 

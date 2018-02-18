@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * This class will make sure we can create the database and tables.
  */
 
+@SuppressWarnings("ALL")
 public class BakingDbHelper extends SQLiteOpenHelper {
 
     /* Set the database name */
@@ -70,9 +71,8 @@ public class BakingDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        sqLiteDatabase.execSQL(SQL_DELETE_BAKING);
-        sqLiteDatabase.execSQL(SQL_DELETE_INGREDIENTS);
-        sqLiteDatabase.execSQL(SQL_DELETE_STEPS);
-        onCreate(sqLiteDatabase);
+        /* Update the database by using an if statement for the version number
+        * At the moment no update is being carried out. Check web page for a best practice
+        * on using onUpgrade: https://thebhwgroup.com/blog/how-android-sqlite-onupgrade */
     }
 }

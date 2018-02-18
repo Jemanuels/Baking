@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
  * Last updated 2018\02\02
  */
 
+@SuppressWarnings("ALL")
 public class BakingSyncIntentService extends IntentService{
 
     public BakingSyncIntentService() {

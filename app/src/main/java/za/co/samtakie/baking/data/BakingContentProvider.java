@@ -18,6 +18,7 @@ import android.support.annotation.Nullable;
  * exported = false limits access to this ContentProvider to only this app
  */
 
+@SuppressWarnings("ALL")
 public class BakingContentProvider extends ContentProvider {
 
     /* It's convention to use 100, 200, 300 etc for directories
@@ -339,6 +340,7 @@ public class BakingContentProvider extends ContentProvider {
             case INGREDIENTS:
                 // Inserting values into ingredients table
 
+                //noinspection TryWithIdenticalCatches
                 try{
                     db.insertOrThrow(BakingContract.BakingEntry.TABLE_INGREDIENTS_NAME, null, values);
                     /*String idRecipe = values.getAsString("recipeID");
@@ -366,6 +368,7 @@ public class BakingContentProvider extends ContentProvider {
             case STEPS:
                 // Inserting values into STEPS table
 
+                //noinspection TryWithIdenticalCatches,TryWithIdenticalCatches
                 try{
                     db.insertOrThrow(BakingContract.BakingEntry.TABLE_STEPS_NAME, null, values);
                     /*String idRecipe = values.getAsString("recipeID");

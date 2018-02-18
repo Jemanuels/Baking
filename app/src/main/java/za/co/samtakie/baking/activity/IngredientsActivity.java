@@ -1,4 +1,4 @@
-package za.co.samtakie.baking;
+package za.co.samtakie.baking.activity;
 
 import android.net.Uri;
 import android.support.v4.app.FragmentManager;
@@ -7,10 +7,14 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import za.co.samtakie.baking.IngredientsFragment;
+import za.co.samtakie.baking.R;
+
 /**
  * Created by Jurgen Emanuels
  * Last updated on the 2018/02/07
  */
+@SuppressWarnings("ALL")
 public class IngredientsActivity extends AppCompatActivity {
 
     /*public static final int INDEX_ID = 0; // For future use*/
@@ -41,10 +45,11 @@ public class IngredientsActivity extends AppCompatActivity {
             recipeName = extras.getString(getResources().getString(R.string.recipeName));
             sPosition = String.valueOf(position);
 
+            setTitle(recipeName);
+
             /* Set the data to the following methods: setStepUri, setPosition, setRecipeName, setSposition. */
             ingredientsFragment.setIngredientUri(ingredientUri);
             ingredientsFragment.setPosition(position);
-            ingredientsFragment.setRecipeName(recipeName);
             ingredientsFragment.setsPosition(sPosition);
 
             FragmentManager fragmentManager = getSupportFragmentManager();

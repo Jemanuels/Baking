@@ -7,18 +7,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import za.co.samtakie.baking.IngredientsActivity;
+import za.co.samtakie.baking.activity.IngredientsActivity;
 import za.co.samtakie.baking.R;
 
 /**
  * Created by jemanuels on 2017/12/06.
  * Last updated on 2018/02/02 clear all unused imports
- */
-
-/**
  * {@link IngredientsAdapter} exposes a list of recipe to a
  * {@link RecyclerView}
  */
+@SuppressWarnings("ALL")
 public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.IngredientsViewHolder> {
 
     /*private  String LOG_TAG = "IngredientsAdapter"; // For log view */
@@ -101,8 +99,7 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
         TextView label;
         public IngredientsViewHolder(View itemView) {
             super(itemView);
-            label = (TextView) itemView.findViewById(R.id.ingredients_tv);
-            /*Log.i(LOG_TAG, "Data has been linked to TextView");*/
+            label = itemView.findViewById(R.id.ingredients_tv);
         }
     }
 }

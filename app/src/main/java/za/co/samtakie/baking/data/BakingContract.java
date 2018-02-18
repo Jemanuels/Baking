@@ -10,6 +10,7 @@ import android.provider.BaseColumns;
  * column names, intent actions, and other features of the Baking content provider.
  */
 
+@SuppressWarnings("ALL")
 public class BakingContract {
 
     /* The authority, which is how the code knows which Content Provider to access */
@@ -28,7 +29,7 @@ public class BakingContract {
     /* This is the path for the steps directory. */
     public static final String PATH_STEPS = "steps";
 
-    /* This is a variable for the Widget app incase there is no valid recipe ID */
+    /* This is a variable for the Widget app in case there is no valid recipe ID */
     public static final int INVALID_BAKING_ID = -1;
 
     /**

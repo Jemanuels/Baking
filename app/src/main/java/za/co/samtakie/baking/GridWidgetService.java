@@ -16,6 +16,7 @@ import za.co.samtakie.baking.data.BakingImages;
  * Last updated 2018/02/02
  */
 
+@SuppressWarnings("ALL")
 public class GridWidgetService extends RemoteViewsService {
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
@@ -23,6 +24,7 @@ public class GridWidgetService extends RemoteViewsService {
     }
 }
 
+    @SuppressWarnings("ALL")
     class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         Context mContext;
         Cursor mCursor;
@@ -33,6 +35,15 @@ public class GridWidgetService extends RemoteViewsService {
 
         @Override
         public void onCreate() {
+            /* Get all baking ifo */
+            Uri bakingUri = BakingContract.BakingEntry.buildRecipeAllUri();
+            mCursor = mContext.getContentResolver().query(
+                    bakingUri,
+                    null,
+                    null,
+                    null,
+                    null
+            );
 
         }
 
@@ -86,10 +97,10 @@ public class GridWidgetService extends RemoteViewsService {
 
             int bakingId = mCursor.getInt(bakingindexId);
             String recipeName = mCursor.getString(bakingName);
-            Log.d(GridWidgetService.class.getSimpleName(), "Baking ID " + bakingId);
+            Log.d(GridWidgetService.class.getSimpleName(), "Baking ID " + position);
             Log.d(GridWidgetService.class.getSimpleName(), "Total amount of data " + mCursor.getCount());
 
-            RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.baking_widget_provider);
+            RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.widget_grid_view);
 
             /* Update the image */
             int imgRes = BakingImages.getBakingImages().get(position);
@@ -97,7 +108,7 @@ public class GridWidgetService extends RemoteViewsService {
             views.setTextViewText(R.id.widget_baking_text, recipeName);
 
             Bundle extras = new Bundle();
-            extras.putInt("position", position);
+            extras.putInt("position", position+1);
             extras.putString("recipeName", recipeName);
             Intent fillInIntent = new Intent();
             fillInIntent.putExtras(extras);

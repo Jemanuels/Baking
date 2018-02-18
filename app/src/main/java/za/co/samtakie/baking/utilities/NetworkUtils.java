@@ -14,7 +14,10 @@ import javax.net.ssl.HttpsURLConnection;
  * This Class has the functionality to download the data from the web.
  */
 
-public class NetworkUtils {
+public final class NetworkUtils {
+
+    /* suppress the instructor */
+    private NetworkUtils(){}
 
     // Get the name of the current Class and assign it to the TAG constant
     private static final String TAG = NetworkUtils.class.getSimpleName();
@@ -44,7 +47,7 @@ public class NetworkUtils {
      *
      * @param url the url string from the return buildUrl method
      * @return return the data string in this case JSON
-     * @throws IOException
+     * @throws IOException in case there is no connection
      */
     public static String getResponseFromHttpUrl(URL url) throws IOException{
         HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
@@ -57,8 +60,7 @@ public class NetworkUtils {
 
             boolean hasInput = scanner.hasNext();
             if(hasInput){
-                String returnScanner = scanner.next();
-                return returnScanner;
+                return scanner.next();
             } else {
                 return null;
             }

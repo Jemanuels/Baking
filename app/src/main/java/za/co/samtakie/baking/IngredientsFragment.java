@@ -28,6 +28,7 @@ import za.co.samtakie.baking.data.IngredientsAdapter;
  * create an instance of this fragment.
  * Last updated 2018/02/2017
  */
+@SuppressWarnings("ALL")
 public class IngredientsFragment extends Fragment  implements LoaderManager.LoaderCallbacks<Cursor>{
 
     /*
@@ -51,7 +52,6 @@ public class IngredientsFragment extends Fragment  implements LoaderManager.Load
     private int position;
     private String sPosition;
     private Uri ingredientUri;
-    private String recipeName;
     @BindView(R.id.ingredients_rv) RecyclerView recyclerView;
 
 
@@ -94,13 +94,9 @@ public class IngredientsFragment extends Fragment  implements LoaderManager.Load
         /*
          * Setting the adapter attaches it to the RecyclerView in our layout.
          */
-
-        getActivity().setTitle(recipeName);
-
         recyclerView.setAdapter(ingredientsAdapter);
 
         return view;
-        
     }
 
     @Override
@@ -167,9 +163,5 @@ public class IngredientsFragment extends Fragment  implements LoaderManager.Load
 
     public void setIngredientUri(Uri ingredientUri) {
         this.ingredientUri = ingredientUri;
-    }
-
-    public void setRecipeName(String recipeName) {
-        this.recipeName = recipeName;
     }
 }

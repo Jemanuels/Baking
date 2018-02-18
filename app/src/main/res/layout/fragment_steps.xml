@@ -27,7 +27,7 @@
         android:padding="8dp"
         android:layout_below="@+id/playerView"
         android:ems="10"
-        android:text="Name" />
+        tools:text="Name" />
 
     <com.google.android.exoplayer2.ui.SimpleExoPlayerView
         android:id="@+id/playerView"
@@ -40,6 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:src="@drawable/no_video"
+        android:contentDescription="@string/novideo"
         android:layout_alignParentTop="true"/>
 
     <Button
@@ -51,10 +52,9 @@
         android:layout_alignBaseline="@+id/prevBtn"
         android:layout_alignBottom="@+id/prevBtn"
         android:layout_alignParentEnd="true"
-        android:layout_marginLeft="34dp"
-        android:layout_marginRight="8dp"
-        android:onClick="nextData"
-        android:text="Next"/>
+        android:layout_marginStart="34dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/Next"/>
 
     <Button
         android:id="@+id/prevBtn"
@@ -64,8 +64,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignStart="@+id/step_tv"
         android:layout_marginBottom="12dp"
-        android:layout_marginLeft="16dp"
-        android:onClick="prevData"
-        android:text="Prev" />
+        android:layout_marginStart="16dp"
+        android:text="@string/prev" />
 
 </RelativeLayout>

@@ -1,21 +1,31 @@
-package za.co.samtakie.baking;
+package za.co.samtakie.baking.activity;
 
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
+import android.support.test.espresso.IdlingResource;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+
+import za.co.samtakie.baking.ItemFragment;
+import za.co.samtakie.baking.R;
 import za.co.samtakie.baking.data.BakingContract;
 import za.co.samtakie.baking.sync.BakingSyncUtils;
+
+import za.co.samtakie.baking.IdlingResource.SimpleIdlingResource;
 
 /**
  * Created by Jurgen Emanuels
  * Last updated on the 2018/02/07
  */
 
-public class MainActivity extends AppCompatActivity implements ItemFragment.RecipeAdapterOnClickHandler{
+@SuppressWarnings("ALL")
+public class MainActivity extends AppCompatActivity implements ItemFragment.RecipeAdapterOnClickHandler {
 
     /*
      * We store the indices of the values in the array of Strings above to more quickly be able to
@@ -30,6 +40,9 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.Reci
 
     /*// Get the class name and assign it to the constant TAG for Logging purposes
     private String TAG = MainActivity.class.getSimpleName();*/ //For testing purposes
+
+    /* The Idling Resource which will be null in production */
+    @Nullable private SimpleIdlingResource mIdlingResource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,5 +98,14 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.Reci
 
         /*Log.d("Button Ingredients " , recipePosition + "");*/
         //Toast.makeText(context, "Position clicked = " + recipePosition, Toast.LENGTH_SHORT).show();
+    }
+
+    @VisibleForTesting
+    @NonNull
+    public IdlingResource getIdlingResource(){
+        if(mIdlingResource == null){
+            mIdlingResource = new SimpleIdlingResource();
+        }
+        return mIdlingResource;
     }
 }

@@ -17,7 +17,11 @@
     <string name="countSteps">countSteps</string>
     <string name="positionSteps">positionSteps</string>
     <string name="playerPosition">playerPosition</string>
-
+    <string name="emptyGrid">Empty Grid</string>
+    <string name="imageDescription">Hold the recipe image</string>
+    <string name="prev">Prev</string>
+    <string name="Next">Next</string>
+    <string name="novideo">show if there is no video</string>
     <!-- Recipe Fragment text data -->
     <string name="ingredients_button_text">View Ingredients</string>
     <string name="recipe_error_message">must implement OnFragmentInteractionListener</string>

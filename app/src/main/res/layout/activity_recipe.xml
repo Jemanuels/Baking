@@ -4,7 +4,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout_editor_absoluteY="81dp"
-        tools:context="za.co.samtakie.baking.RecipeActivity"
+        tools:context="za.co.samtakie.baking.activity.RecipeActivity"
         tools:layout_editor_absoluteX="0dp">
 
     <FrameLayout

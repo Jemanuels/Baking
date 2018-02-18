@@ -26,6 +26,7 @@ import za.co.samtakie.baking.data.RecipeAdapter;
  * {@link ItemFragment.RecipeAdapterOnClickHandler} interface
  * to handle interaction events.
  */
+@SuppressWarnings("ALL")
 public class ItemFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private RecipeAdapterOnClickHandler mListener;
