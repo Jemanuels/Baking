@@ -3,13 +3,13 @@ package za.co.samtakie.baking;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
-import za.co.samtakie.baking.data.BakingContract;
-import za.co.samtakie.baking.data.BakingImages;
+
+import za.co.samtakie.baking.activity.IngredientsActivity;
+import za.co.samtakie.baking.data.WidgetDataModel;
 
 /**
  * Created by jemanuels on 2018/02/01.
@@ -20,47 +20,34 @@ import za.co.samtakie.baking.data.BakingImages;
 public class GridWidgetService extends RemoteViewsService {
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
-        return new GridRemoteViewsFactory(this.getApplicationContext());
+        return new GridRemoteViewsFactory(this.getApplicationContext(), WidgetDataModel.getIngredientData(getApplicationContext(),intent.getExtras().getInt(BakingWidgetProvider.CONFIGURE_START)), intent);
     }
+
+
 }
 
     @SuppressWarnings("ALL")
     class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         Context mContext;
         Cursor mCursor;
+        int positionId;
 
-        public GridRemoteViewsFactory(Context applicationContext) {
-            mContext = applicationContext;
+        public GridRemoteViewsFactory(Context applicationContext, Cursor cursor, Intent intent) {
+
+            this.mContext = applicationContext;
+            this.positionId = intent.getExtras().getInt(BakingWidgetProvider.CONFIGURE_START);
+            this.mCursor = cursor;
         }
 
         @Override
         public void onCreate() {
-            /* Get all baking ifo */
-            Uri bakingUri = BakingContract.BakingEntry.buildRecipeAllUri();
-            mCursor = mContext.getContentResolver().query(
-                    bakingUri,
-                    null,
-                    null,
-                    null,
-                    null
-            );
 
         }
 
+
+
         @Override
         public void onDataSetChanged() {
-            /* Get all baking ifo */
-            Uri bakingUri = BakingContract.BakingEntry.buildRecipeAllUri();
-            if(mCursor != null){
-                mCursor.close();
-            }
-            mCursor = mContext.getContentResolver().query(
-                    bakingUri,
-                    null,
-                    null,
-                    null,
-                    null
-            );
 
         }
 
@@ -92,27 +79,23 @@ public class GridWidgetService extends RemoteViewsService {
             }
 
             mCursor.moveToPosition(position);
-            int bakingindexId = mCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_RECIPE_ID);
-            int bakingName = mCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_RECIPE_NAME);
 
-            int bakingId = mCursor.getInt(bakingindexId);
-            String recipeName = mCursor.getString(bakingName);
-            Log.d(GridWidgetService.class.getSimpleName(), "Baking ID " + position);
-            Log.d(GridWidgetService.class.getSimpleName(), "Total amount of data " + mCursor.getCount());
+            String ingredient = mCursor.getString(IngredientsActivity.INDEX_COLUMN_INGREDIENTS_INGREDIENT);
+            String measure = mCursor.getString(IngredientsActivity.INDEX_COLUMN_INGREDIENTS_MEASURE);
+            String quantity = mCursor.getString(IngredientsActivity.INDEX_COLUMN_INGREDIENTS_QUANTITY);
+            String ingredients = ingredient + " - " + measure + " - " + quantity;
 
-            RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.widget_grid_view);
+            RemoteViews views = new RemoteViews(mContext.getPackageName(), android.R.layout.simple_list_item_1);
+            views.setTextViewText(android.R.id.text1, ingredients);
+            views.setTextColor(android.R.id.text1, Color.BLACK);
 
-            /* Update the image */
-            int imgRes = BakingImages.getBakingImages().get(position);
-            views.setImageViewResource(R.id.widget_baking_image, imgRes);
-            views.setTextViewText(R.id.widget_baking_text, recipeName);
+            final Intent fillInIntent = new Intent();
+            fillInIntent.setAction(BakingWidgetProvider.ACTION_TOAST);
+            final Bundle bundle = new Bundle();
+            bundle.putString(BakingWidgetProvider.EXTRA_STRING, ingredients);
+            fillInIntent.putExtras(bundle);
+            views.setOnClickFillInIntent(android.R.id.text1, fillInIntent);
 
-            Bundle extras = new Bundle();
-            extras.putInt("position", position+1);
-            extras.putString("recipeName", recipeName);
-            Intent fillInIntent = new Intent();
-            fillInIntent.putExtras(extras);
-            views.setOnClickFillInIntent(R.id.widget_baking_image, fillInIntent);
 
             return views;
         }

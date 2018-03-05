@@ -26,8 +26,9 @@
         <activity
             android:name=".activity.IngredientsActivity"
             android:parentActivityName=".activity.RecipeActivity" />
-        <activity android:name=".activity.StepsActivity"
-            android:parentActivityName=".activity.RecipeActivity"/>
+        <activity
+            android:name=".activity.StepsActivity"
+            android:parentActivityName=".activity.RecipeActivity" />
 
         <!--
         Register the BakingContentProvider
@@ -54,12 +55,20 @@
         </receiver>
 
         <service
-            android:name="GridWidgetService"
-            android:permission="android.permission.BIND_REMOTEVIEWS"
-            android:exported="false" />
-        <service
-            android:name=".BakingService"
-            android:exported="false" />
+            android:name=".GridWidgetService"
+            android:exported="true"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <service android:name=".BakingIntentService"
+            android:exported="false"/>
+
+        <activity android:name=".activity.WidgetConfigurationActivity">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
+
     </application>
 
 </manifest>

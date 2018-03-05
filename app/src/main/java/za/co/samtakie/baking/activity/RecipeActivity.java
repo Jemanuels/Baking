@@ -22,8 +22,8 @@ import za.co.samtakie.baking.data.*;
 @SuppressWarnings("ALL")
 public class RecipeActivity extends AppCompatActivity implements RecipeFragment.RecipeItemOnClickHandler {
 
+    /* This array will be passed through the query to get all columns*/
     public static final String[] STEPS_PROJECTION  = {
-
                     BakingContract.BakingEntry._ID,
                     BakingContract.BakingEntry.COLUMN_STEP_DESCRIPTION,
                     BakingContract.BakingEntry.COLUMN_STEP_ID,
@@ -33,32 +33,42 @@ public class RecipeActivity extends AppCompatActivity implements RecipeFragment.
                     BakingContract.BakingEntry.COLUMN_STEP_RECIPEID
     };
 
+    /* Static variable linked to the column index for passing into the Cursor to get the correct
+    * column data */
     public static final int INDEX_ID = 0;
     public static final int INDEX_COLUMN_STEP_SHORTDESCRIPTION = 3;
     public static final int INDEX_COLUMN_STEP_THUMBNAILURL = 4;
 
-    //private TextView recipeName;
+
     // Get the class name and assign it to the constant TAG for Logging purposes
     private String TAG = RecipeActivity.class.getSimpleName();
+
+    /* Variable to hold the data for passing through to the StepsActivity and the RecipeActivity*/
     private int position;
     private String sPosition;
     private int positionSteps;
     private Uri stepUri;
     private String recipeName;
-    private boolean mTwoPane;
+
+    /* Check if this is a phone or Tablet, true for Tablet and False for Phone*/
+    private boolean tabletSize;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe);
+
+        /* Get data from the MainActivity*/
         Bundle extras = getIntent().getExtras();
+
         /* Set the Uri for the StepsActivity and Fragment */
         stepUri = BakingContract.BakingEntry.buildStepsUri();
-        if(findViewById(R.id.android_me_linear_layout) != null) {
-            mTwoPane = true;
 
+        /* Read the boolean value from the value based on Tablet or Phone*/
+        tabletSize = getResources().getBoolean(R.bool.screen_large);
+
+        if(tabletSize) {
             if (savedInstanceState == null) {
-
                 RecipeFragment recipeFragment = new RecipeFragment();
 
                /* Get the correct position, recipeName and the uriRecipeClicked */
@@ -81,7 +91,7 @@ public class RecipeActivity extends AppCompatActivity implements RecipeFragment.
             }
 
         } else {
-            mTwoPane = false;
+
 
             if (savedInstanceState == null) {
                 RecipeFragment recipeFragment = new RecipeFragment();
@@ -112,6 +122,7 @@ public class RecipeActivity extends AppCompatActivity implements RecipeFragment.
         savedInstanceState.putString(getResources().getString(R.string.sPosition), sPosition);
         savedInstanceState.putString(getResources().getString(R.string.stepUri), stepUri.toString());
         savedInstanceState.putString(getResources().getString(R.string.stepUri), stepUri.toString());
+        savedInstanceState.putString(getResources().getString(R.string.recipeName), recipeName);
         super.onSaveInstanceState(savedInstanceState);
 
     }
@@ -123,6 +134,7 @@ public class RecipeActivity extends AppCompatActivity implements RecipeFragment.
         stepUri = Uri.parse(savedInstanceState.getString(getResources().getString(R.string.stepUri)));
         position = savedInstanceState.getInt(getResources().getString(R.string.position));
         sPosition = savedInstanceState.getString(getResources().getString(R.string.sPosition));
+        recipeName = savedInstanceState.getString(getResources().getString(R.string.recipeName));
 
     }
 
@@ -138,7 +150,7 @@ public class RecipeActivity extends AppCompatActivity implements RecipeFragment.
 
     public void showIngredients(View v)
     {
-        if(mTwoPane){
+        if(tabletSize){
             IngredientsFragment ingredientsFragment = new IngredientsFragment();
 
             Uri ingredient = BakingContract.BakingEntry.buildIngredientsUri();
@@ -171,7 +183,7 @@ public class RecipeActivity extends AppCompatActivity implements RecipeFragment.
     @Override
     public void recipeItemOnClickHandler(int stepPosition, View view, int adapterPosition, int countSteps) {
 
-        if(mTwoPane){
+        if(tabletSize){
             StepsFragment stepsFragment = new StepsFragment();
             Uri uriRecipeClicked;
             uriRecipeClicked = BakingContract.BakingEntry.buildStepsItemUri(stepPosition);
@@ -207,7 +219,6 @@ public class RecipeActivity extends AppCompatActivity implements RecipeFragment.
             intentToStartRecipeActivity.putExtra(getResources().getString(R.string.recipeName), recipeName);
             intentToStartRecipeActivity.putExtra(getResources().getString(R.string.positionSteps), adapterPosition);
 
-            /*Log.d(TAG, countSteps + "");*/
             startActivity(intentToStartRecipeActivity);
         }
 

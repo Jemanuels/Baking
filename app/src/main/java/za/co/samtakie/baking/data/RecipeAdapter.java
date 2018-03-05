@@ -8,6 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
+
 import za.co.samtakie.baking.ItemFragment.*;
 import za.co.samtakie.baking.activity.MainActivity;
 import za.co.samtakie.baking.R;
@@ -77,11 +80,25 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
      */
     @Override
     public void onBindViewHolder(RecipeViewHolder holder, final int position) {
-
+        String imageUrl;
         cursor.moveToPosition(position);
         String recipe = cursor.getString(MainActivity.INDEX_COLUMN_RECIPE_NAME);
         holder.label.setText(recipe);
-        holder.bakingImageView.setImageResource(BakingImages.getBakingImages().get(position));
+        if(cursor.getString(MainActivity.INDEX_COLUMN_RECIPE_IMAGE).equals("")) {
+            imageUrl = null;
+        } else {
+            imageUrl = cursor.getString(MainActivity.INDEX_COLUMN_RECIPE_IMAGE);
+        }
+        Picasso.with(holder.bakingImageView.getContext())
+                .load(imageUrl)
+                .placeholder(BakingImages.getBakingImages().get(position))
+                .into(holder.bakingImageView);
+        /*if(cursor.getString(MainActivity.INDEX_COLUMN_RECIPE_IMAGE).equals("")) {
+            holder.bakingImageView.setImageResource();
+        } else {
+            holder.bakingImageView.setImageResource(BakingImages.getBakingImages().get(position));
+        }*/
+
     }
 
     /**

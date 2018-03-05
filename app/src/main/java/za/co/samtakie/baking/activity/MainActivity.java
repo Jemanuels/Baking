@@ -27,19 +27,11 @@ import za.co.samtakie.baking.IdlingResource.SimpleIdlingResource;
 @SuppressWarnings("ALL")
 public class MainActivity extends AppCompatActivity implements ItemFragment.RecipeAdapterOnClickHandler {
 
-    /*
-     * We store the indices of the values in the array of Strings above to more quickly be able to
-     * access the data from our query. If the order of the Strings above changes, these indices
-     * must be adjusted to match the order of the Strings.
-     */
-    /*public static final int INDEX_ID = 0;// For future use*/
+    /* Static variable linked to the column index for passing into the Cursor to get the correct
+    * column data */
     public static final int INDEX_COLUMN_RECIPE_ID = 1;
-    /*public static final int INDEX_COLUMN_RECIPE_IMAGE = 2;// For future use*/
+    public static final int INDEX_COLUMN_RECIPE_IMAGE = 2;
     public static final int INDEX_COLUMN_RECIPE_NAME = 3;
-    /*public static final int INDEX_COLUMN_RECIPE_SERVINGS = 4; // For future use*/
-
-    /*// Get the class name and assign it to the constant TAG for Logging purposes
-    private String TAG = MainActivity.class.getSimpleName();*/ //For testing purposes
 
     /* The Idling Resource which will be null in production */
     @Nullable private SimpleIdlingResource mIdlingResource;
@@ -61,11 +53,10 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.Reci
      * @param recipePosition the position of the item that was clicked
      * @param view           the view hosting the item
      */
-
     @Override
     public void recipeAdapterOnClickHandler(int recipePosition, View view) {
 
-        /* Create a Rri object to hold the link of the item that has been clicked. */
+        /* Create a Uri object to hold the link of the item that has been clicked. */
         Uri uriRecipeClicked;
 
         /* This Context will allow access to the application-specific resources and classes,
@@ -95,9 +86,6 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.Reci
 
         /* Finally start the activity */
         startActivity(intentToStartRecipeActivity);
-
-        /*Log.d("Button Ingredients " , recipePosition + "");*/
-        //Toast.makeText(context, "Position clicked = " + recipePosition, Toast.LENGTH_SHORT).show();
     }
 
     @VisibleForTesting

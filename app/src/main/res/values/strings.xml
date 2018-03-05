@@ -26,5 +26,9 @@
     <string name="ingredients_button_text">View Ingredients</string>
     <string name="recipe_error_message">must implement OnFragmentInteractionListener</string>
 
+    <string name="app_widget_title">Samtakie Recipe</string>
+
+    <!-- widget configuration -->
+    <string name="widget_configuration_title">please select a recipe.</string>
 
 </resources>

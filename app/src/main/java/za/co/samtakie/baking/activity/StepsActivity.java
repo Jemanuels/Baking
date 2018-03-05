@@ -4,7 +4,6 @@ import android.net.Uri;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import za.co.samtakie.baking.R;
@@ -12,7 +11,7 @@ import za.co.samtakie.baking.StepsFragment;
 
 /**
  * Created by Jurgen Emanuels
- * Last updated on the 2018/02/10
+ * Last updated on the 2018/03/03
  */
 @SuppressWarnings("ALL")
 public class StepsActivity extends AppCompatActivity{
@@ -23,6 +22,9 @@ public class StepsActivity extends AppCompatActivity{
     private int countSteps;
     private String sPosition;
     private int itempositionSteps;
+    private StepsFragment stepsFragment;
+
+    private static final String TAG_MY_FRAGMENT = "stepFragment";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +33,7 @@ public class StepsActivity extends AppCompatActivity{
 
         /* Get the Bundle from the Widget and Parent App */
         Bundle extras = getIntent().getExtras();
-        StepsFragment stepsFragment = new StepsFragment();
+        stepsFragment = new StepsFragment();
         if (savedInstanceState == null) {
 
 
@@ -44,6 +46,7 @@ public class StepsActivity extends AppCompatActivity{
             recipeName = extras.getString(getResources().getString(R.string.recipeName));
             sPosition = extras.getString(getResources().getString(R.string.sPosition));
 
+            /* Set the title of the Activity to the recipe name*/
             setTitle(recipeName);
 
             /* Set the data to the following methods: setStepUri, setPosition, setRecipeName, setSposition.
@@ -55,12 +58,12 @@ public class StepsActivity extends AppCompatActivity{
             stepsFragment.setCountSteps(countSteps);
             stepsFragment.setPositionSteps(itempositionSteps);
 
-            Log.d("Recipe Name ", recipeName);
+
 
             /* A FragmentManager to add and start and load the Fragment */
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.fragment_steps, stepsFragment)
+                    .replace(R.id.fragment_steps, stepsFragment, TAG_MY_FRAGMENT)
                     .commit();
 
         }else {
@@ -81,14 +84,7 @@ public class StepsActivity extends AppCompatActivity{
             stepsFragment.setsPosition(sPosition);
             stepsFragment.setCountSteps(countSteps);
             stepsFragment.setPositionSteps(itempositionSteps);
-
-            Log.d("Recipe Name ", recipeName);
-
-            /* A FragmentManager to add and start and load the Fragment */
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.fragment_steps, stepsFragment)
-                    .commit();
+            stepsFragment = (StepsFragment) getSupportFragmentManager().findFragmentByTag(TAG_MY_FRAGMENT);
         }
     }
 
@@ -120,6 +116,7 @@ public class StepsActivity extends AppCompatActivity{
         outState.putInt("itempositionSteps", itempositionSteps);
         outState.putString("recipeName", recipeName);
         outState.putString("sPosition",sPosition);
+        outState.putString("recipeName",recipeName);
 
     }
 

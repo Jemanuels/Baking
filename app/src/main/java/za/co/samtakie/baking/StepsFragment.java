@@ -11,7 +11,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,10 +35,13 @@ import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.squareup.picasso.Picasso;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import za.co.samtakie.baking.activity.RecipeActivity;
 import za.co.samtakie.baking.data.BakingContract;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -65,6 +67,7 @@ public class StepsFragment extends Fragment implements LoaderManager.LoaderCallb
     private long playerPosition;
     private boolean isThumbNail, isVideoUrl;
     private String videoUrl;
+    private String thumbNail;
 
     /* Uri variable to hold the video or thumbnail data */
     private Uri builtUri;
@@ -85,15 +88,11 @@ public class StepsFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // retain this fragment
-        //setRetainInstance(true);
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
     }
 
     @Override
@@ -124,10 +123,10 @@ public class StepsFragment extends Fragment implements LoaderManager.LoaderCallb
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_steps, container, false);
 
+        /*Bind all the views with this Fragment*/
         ButterKnife.bind(this, view);
 
         if(savedInstanceState != null) {
-            Log.d("Player position ", savedInstanceState.getLong(getResources().getString(R.string.playerPosition)) + "");
             playerPosition = savedInstanceState.getLong("playerPosition");
             recipeName = savedInstanceState.getString("recipeName");
             videoUrl = savedInstanceState.getString("videoUrl");
@@ -146,16 +145,20 @@ public class StepsFragment extends Fragment implements LoaderManager.LoaderCallb
 
                 initializePlayer(builtUri, playerPosition, isThumbNail);
             } else if(isThumbNail){
-
-                initializePlayer(builtThumbnailUri, playerPosition, isThumbNail);
+                /* load the images if there is any or the default image from the placeHolder*/
+                loadImage(builtThumbnailUri);
             } else {
+                // hide the exoPlayer view
                 mPlayerView.setVisibility(View.INVISIBLE);
             }
 
 
         }
 
+        /*By default hide the imageview for the image incase there is no video to play*/
         noVideoImgV.setVisibility(View.INVISIBLE);
+
+        /* Initiate the next button click*/
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -170,7 +173,7 @@ public class StepsFragment extends Fragment implements LoaderManager.LoaderCallb
                 }
 
                 /* If the current position is greater than 1 and equal and less than count step
-                * assign the new data to newDataStep and past it to the buildStepsItemUri.
+                * assign the new data to newDataStep and passed it to the buildStepsItemUri.
                 * This will load the next step.*/
                 if(currentPosition >= 1 && currentPosition <= countSteps){
                     newDataStep = position;
@@ -188,6 +191,9 @@ public class StepsFragment extends Fragment implements LoaderManager.LoaderCallb
         prevBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                /* If the prevoius position is greater than or equal to zero substract one from
+                * positionsSteps and position and passed the new position to the buildStepsItemUri
+                * This will load the prevoius data */
                 if(positionSteps >= 0){
                     --positionSteps;
                     --position;
@@ -222,6 +228,44 @@ public class StepsFragment extends Fragment implements LoaderManager.LoaderCallb
 
 
         return view;
+    }
+
+    /***
+     * This method will load an image if there is an image file, if there is a video file it will
+     * load the default picture in the placeholder.
+     * @param uri the link of the thumbnail
+     * @param isThumbNail a boolean to check if there is no link
+     */
+    private void loadImage( Uri uri) {
+            if(uri != null) {
+                // Hide the exoPlayer view
+                mPlayerView.setVisibility(View.INVISIBLE);
+                String thumbNail = builtThumbnailUri.toString().substring(builtThumbnailUri.toString().lastIndexOf('.') + 1);
+                //initializePlayer(builtThumbnailUri, playerPosition, isThumbNail);
+                if (thumbNail.equals("mp4")) {
+
+                    thumbNail = null;
+
+                    // don't load the image load the default placeholder
+                    Picasso.with(noVideoImgV.getContext())
+                            .load(thumbNail)
+                            .placeholder(R.drawable.no_video)
+                            .into(noVideoImgV);
+                } else {
+                    // in this case the url is not a video file and this can be loaded in the imageView
+                    Picasso.with(noVideoImgV.getContext())
+                            .load(thumbNail)
+                            .placeholder(R.drawable.no_video)
+                            .into(noVideoImgV);
+                }
+            }else{
+                String thumbNail = null;
+                Picasso.with(noVideoImgV.getContext())
+                        .load(thumbNail)
+                        .placeholder(R.drawable.no_video)
+                        .into(noVideoImgV);
+            }
+
     }
 
     /**
@@ -268,7 +312,7 @@ public class StepsFragment extends Fragment implements LoaderManager.LoaderCallb
         if(mExoplayer != null) {
             releasePlayer();
         }
-        Log.d("onDestroy ", "Has been called");
+
     }
 
     @Override
@@ -281,15 +325,17 @@ public class StepsFragment extends Fragment implements LoaderManager.LoaderCallb
                 mPlayerView.setVisibility(View.VISIBLE);
                 initializePlayer(builtUri, playerPosition, isThumbNail);
             } else if(builtThumbnailUri != null){
-                mPlayerView.setVisibility(View.VISIBLE);
-                initializePlayer(builtThumbnailUri, playerPosition, isThumbNail);
+                mPlayerView.setVisibility(View.INVISIBLE);
+                loadImage(builtThumbnailUri);
             } else {
                 mPlayerView.setVisibility(View.INVISIBLE);
+                Uri uri = null;
+                loadImage(uri);
             }
 
         }
         playerPosition = 0;
-        Log.d("onResume ", "Has been called");
+
     }
 
     @Override
@@ -300,7 +346,7 @@ public class StepsFragment extends Fragment implements LoaderManager.LoaderCallb
             playerPosition = mExoplayer.getCurrentPosition();
             releasePlayer();
         }
-        Log.d("onPause ", "Has been called");
+
     }
 
     @Override
@@ -328,7 +374,7 @@ public class StepsFragment extends Fragment implements LoaderManager.LoaderCallb
         }
 
         if(!cursorHasValidData){
-            //Log.d("Data ", "There is no data in the cursor");
+
             return;
         }
 
@@ -358,6 +404,7 @@ public class StepsFragment extends Fragment implements LoaderManager.LoaderCallb
                     builtThumbnailUri = Uri.parse(thumbnailURL).buildUpon().build();
                     isThumbNail = true;
                     isVideoUrl = false;
+                    noVideoImgV.setVisibility(View.VISIBLE);
                 } else {
                     noVideoImgV.setVisibility(View.VISIBLE);
                 }
@@ -368,10 +415,12 @@ public class StepsFragment extends Fragment implements LoaderManager.LoaderCallb
                         mPlayerView.setVisibility(View.VISIBLE);
                         initializePlayer(builtUri, playerPosition, isThumbNail);
                     } else if(builtThumbnailUri != null){
-                        mPlayerView.setVisibility(View.VISIBLE);
-                        initializePlayer(builtThumbnailUri, playerPosition, isThumbNail);
+                        mPlayerView.setVisibility(View.INVISIBLE);
+                        loadImage(builtThumbnailUri);
                     } else {
                         mPlayerView.setVisibility(View.INVISIBLE);
+                        Uri uri = null;
+                        loadImage(uri);
                     }
 
 
@@ -380,10 +429,12 @@ public class StepsFragment extends Fragment implements LoaderManager.LoaderCallb
                         mPlayerView.setVisibility(View.VISIBLE);
                         initializePlayer(builtUri, playerPosition, isThumbNail);
                     } else if(builtThumbnailUri != null){
-                        mPlayerView.setVisibility(View.VISIBLE);
-                        initializePlayer(builtThumbnailUri, playerPosition, isThumbNail);
+                        mPlayerView.setVisibility(View.INVISIBLE);
+                        loadImage(builtThumbnailUri);
                     } else {
                         mPlayerView.setVisibility(View.INVISIBLE);
+                        Uri uri = null;
+                        loadImage(uri);
                     }
                 }
 
@@ -438,6 +489,5 @@ public class StepsFragment extends Fragment implements LoaderManager.LoaderCallb
         if(builtThumbnailUri != null) {
             outState.putString("builtThumbnailUri", builtThumbnailUri.toString());
         }
-        Log.d("Recipe name in Fragment", recipeName);
     }
 }
